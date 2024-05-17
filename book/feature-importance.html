@@ -1,0 +1,1085 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Feature importance &#8212; Ensemble learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=f0c89327" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=d2032c04" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=f0c89327" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/bootstrap.css?v=5340d9b1" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/theme.css?v=a243ae73" />
+    <link rel="stylesheet" type="text/css" href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?v=c786f70d" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'book/feature-importance';</script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/copybutton_funcs.js?v=776a791e"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/language_data.js?v=d4673a71"></script>
+    <script src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script src="../_static/searchtools.js?v=d24376de"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?v=95180707"></script>
+    <script src="../_static/scripts/bootstrap.js?v=3d67b3b1"></script>
+    <script src="../_static/scripts/pydata-sphinx-theme.js?v=b2908668"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <link rel="canonical" href="https://jlgmp.github.io/yjl-demo/book/feature-importance.html" />
+    <link rel="icon" href="../_static/fav.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Content with notebooks" href="notebooks.html" />
+    <link rel="prev" title="Random forest" href="random-forest.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Ensemble learning - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Ensemble learning - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="getting-started-with-ensemble-learning.html">Getting started with ensemble learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bagging.html">Bagging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random-forest.html">Random forest</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Feature importance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Content with notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/jlgmp/yjl-demo/master?urlpath=tree/book/feature-importance.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/jlgmp/yjl-demo/blob/master/book/feature-importance.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/jlgmp/yjl-demo" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/jlgmp/yjl-demo/edit/main/book/feature-importance.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/jlgmp/yjl-demo/issues/new?title=Issue%20on%20page%20%2Fbook/feature-importance.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/book/feature-importance.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Feature importance</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#permutation-importance">Permutation importance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#illustrating-permutation-importance">Illustrating permutation importance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sklearn-random-forest-feature-importance">Sklearn Random Forest Feature Importance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-example">Practical example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-turn">Your turn! 🚀</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install the necessary dependencies</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="o">!{</span>sys.executable<span class="o">}</span><span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--quiet<span class="w"> </span>seaborn<span class="w"> </span>pandas<span class="w"> </span>scikit-learn<span class="w"> </span>numpy<span class="w"> </span>matplotlib<span class="w"> </span>jupyterlab_myst<span class="w"> </span>ipython
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="feature-importance">
+<h1>Feature importance<a class="headerlink" href="#feature-importance" title="Link to this heading">#</a></h1>
+<p>It’s quite often that you want to make out the exact reasons of the algorithm outputting a particular answer. Or at the very least to find out which input features contributed most to the result. With Random Forest, you can obtain such information quite easily.</p>
+<section id="intuition">
+<h2>Intuition<a class="headerlink" href="#intuition" title="Link to this heading">#</a></h2>
+<p>From the picture below, it is intuitively clear that, in our credit scoring problem, <em>Age</em> is much more important than <em>Income</em>. This can be formally explained using the concept of <em>information gain</em>.</p>
+<figure class="align-default" id="example-of-credit-scoring-problem">
+<a class="reference internal image-reference" href="https://static-1300131294.cos.ap-shanghai.myqcloud.com/images/ml-advanced/ensemble-learning/feature-importance/Example_of_credit_scoring_problem.png"><img alt="https://static-1300131294.cos.ap-shanghai.myqcloud.com/images/ml-advanced/ensemble-learning/feature-importance/Example_of_credit_scoring_problem.png" src="https://static-1300131294.cos.ap-shanghai.myqcloud.com/images/ml-advanced/ensemble-learning/feature-importance/Example_of_credit_scoring_problem.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 8 </span><span class="caption-text">Example of credit scoring problem</span><a class="headerlink" href="#example-of-credit-scoring-problem" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>In the case of many decision trees or a random forest, the closer the mean position of a feature over all the trees to the root, the more significant it is for a given classification or regression problem. Gains in the splitting criterion, such as the <em>Gini impurity</em>, obtained at each optimal split in every tree is a measure of importance that is directly associated with the splitting feature. The value of this score is distinct for each feature and accumulates over all the trees.</p>
+<p>Let’s go a little deeper into the details.</p>
+<p>There exist a lot of methods to assess feature importances. Leo Breinman in his works suggested to evaluate the importance of a variable by measuring decrease of accuracy of the forest when the variable is randomly permuted or decrease of impurity of a nodes where the given variable is used for splitting. The former method is often called <strong>permutation importance</strong>. The latter method is used in <code class="docutils literal notranslate"><span class="pre">sklearn</span></code>.</p>
+<section id="permutation-importance">
+<h3>Permutation importance<a class="headerlink" href="#permutation-importance" title="Link to this heading">#</a></h3>
+<p>Inspired by this <a class="reference external" href="https://www.researchgate.net/publication/5231126_Conditional_Variable_Importance_for_Random_Forests">article</a>.
+The average reduction in accuracy caused by a variable is determined during the calculation of the out-of-bag error. The greater the reduction in accuracy due to an exclusion or permutation of the variable, the higher its <em>importance score</em>. For this reason, variables with a greater average reduction in accuracy are generally more significant for classification.</p>
+<p>The rationale for calculating permutation importance is the following: By randomly permuting the predictor variable <span class="math notranslate nohighlight">\(X_j\)</span>, its original association with the response <span class="math notranslate nohighlight">\(Y\)</span> is broken. When the permuted variable <span class="math notranslate nohighlight">\(X_j\)</span>, together with all the others non-permuted variables, is used the response for the out-of-bag observations, the prediction <em>accuracy</em> decreases substantially if the original <span class="math notranslate nohighlight">\(X_j\)</span> was associated with response. Thus, as a measure of variable importance, the difference in prediction accuracy before and after permuting is used.</p>
+<p>More formally: denote <span class="math notranslate nohighlight">\(\overline{\mathfrak{B}}^{(t)}\)</span> as the out-of-bag sample for a tree <span class="math notranslate nohighlight">\(t\)</span>, for <span class="math notranslate nohighlight">\(t\in\{1, ..., N\}\)</span> where <span class="math notranslate nohighlight">\(N\)</span> is the number of trees in ensemble. Then the permutation importance of variable <span class="math notranslate nohighlight">\(X_j\)</span> in tree <span class="math notranslate nohighlight">\(t\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[{PI}^{(t)}\left(X_j\right)=\frac{\sum_{i\in\overline{\mathfrak{B}}^{(t)}}I\left(y_i=\hat{y}_i^{(t)}\right)}{\left|\overline{\mathfrak{B}}^{(t)}\right|}-\frac{\sum_{i\in\overline{\mathfrak{B}}^{(t)}}I\left(y_i=\hat{y}_{i,\pi_j}^{(t)}\right)}{\left|\overline{\mathfrak{B}}^{(t)}\right|}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{y}_i^{(t)}=f^{(t)}(\mathbf{x}_i)\)</span> is the predicted class for observation <span class="math notranslate nohighlight">\(i\)</span> before and <span class="math notranslate nohighlight">\(\hat{y}_{i, \pi_j}^{(t)}=f^{(t)}(\mathbf{x}_{i,\pi_j})\)</span> is the predicted class for observation <span class="math notranslate nohighlight">\(i\)</span> after permuting <span class="math notranslate nohighlight">\(X_j\)</span>, <span class="math notranslate nohighlight">\(\mathbf{x}_{i,\pi_j}=\left(x_{i,1}, ..., x_{i,j-1},x_{\pi_j(i),j},x_{i,j+1},...,x_{i,p}\right)\)</span></p>
+<p>Note that by definition <span class="math notranslate nohighlight">\({PI}^{(t)}=0\)</span>, if variable <span class="math notranslate nohighlight">\(X_j\)</span> isn’t in tree <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<p>Now, we can give the feature importance calculation for ensembles:</p>
+<ul class="simple">
+<li><p>not normalized:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[{PI}\left(X_j\right)=\frac{\sum_{t=1}^N {PI}^{(t)}(X_j)}{N}\]</div>
+<ul class="simple">
+<li><p>normalized by the standard deviation of the differences:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[z_j=\frac{{PI}\left(X_j\right)}{\frac{\hat{\sigma}}{\sqrt{N}}}\]</div>
+</section>
+</section>
+<section id="illustrating-permutation-importance">
+<h2>Illustrating permutation importance<a class="headerlink" href="#illustrating-permutation-importance" title="Link to this heading">#</a></h2>
+<p>Let’s assume that we have a toy dataset with 10 instances. Target variable can be either <strong>‘N’</strong> or <strong>‘P’</strong>.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{c|c|c|c|c|c|c|c|c|c}
+  \text{Instances}, i &amp; 1 &amp; 2 &amp; 3 &amp; 4 &amp; 5 &amp; 6 &amp; 7 &amp; 8 &amp; 9 &amp; 10 &amp; \\ 
+  \hline
+  y_i &amp; N &amp; P &amp; P &amp; N &amp; N &amp; P &amp; N &amp; N &amp; N &amp; P \\
+ \end{array}\end{split}\]</div>
+<p>We build an ensemble of 5 trees <span class="math notranslate nohighlight">\(t\)</span>, for <span class="math notranslate nohighlight">\(t\in\{1, ..., 5\}\)</span>. For each tree we get out-of-bag sample (denoted <span class="math notranslate nohighlight">\(\overline{\mathfrak{B}}^{(t)}\)</span> above). For example for the first tree out-of-bag sample consists of instances # 2, 4, 5, and 6.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{c|c|c|c|c|c|c|c|c|c}
+  \text{Tree 1} &amp; \text{Bootstrap-sample 1} &amp; 10 &amp; 9 &amp; 7 &amp; 8 &amp; 1 &amp; 3 &amp; 9 &amp; 10 &amp; 10 &amp; 7\\
+  \hline
+  \text{Tree 2} &amp; \text{Bootstrap-sample 2} &amp; 4 &amp; 8 &amp; 5 &amp; 8 &amp; 3 &amp; 9 &amp; 2 &amp; 6 &amp; 1 &amp; 6\\
+  \hline
+  \text{Tree 3} &amp; \text{Bootstrap-sample 3} &amp; 6 &amp; 2 &amp; 6 &amp; 10 &amp; 2 &amp; 10 &amp; 3 &amp; 6 &amp; 5 &amp; 1\\
+  \hline
+  \text{Tree 4} &amp; \text{Bootstrap-sample 4} &amp; 6 &amp; 7 &amp; 8 &amp; 10 &amp; 6 &amp; 10 &amp; 9 &amp; 10 &amp; 8 &amp; 2\\
+  \hline
+  \text{Tree 5} &amp; \text{Bootstrap-sample 5} &amp; 5 &amp; 8 &amp; 1 &amp; 8 &amp; 5 &amp; 7 &amp; 10 &amp; 1 &amp; 10 &amp; 9\\
+ \end{array}\end{split}\]</div>
+<p>Thus, out-of-bag samples for each tree <span class="math notranslate nohighlight">\(t\)</span> are</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{c|cccc}
+  \text{Tree}, t &amp; \overline{\mathfrak{B}}^{(t)} \\
+  \hline
+  \text{Tree 1} &amp; 2 &amp; 4 &amp; 5 &amp; 6\\
+  \hline
+  \text{Tree 2} &amp; 7 &amp; 10\\
+  \hline
+  \text{Tree 3} &amp; 4 &amp; 7 &amp; 8 &amp; 9\\
+  \hline
+  \text{Tree 4} &amp; 1 &amp; 3 &amp; 4 &amp; 5\\
+  \hline
+  \text{Tree 5} &amp; 2 &amp; 3 &amp; 4 &amp; 6\\
+  \hline
+ \end{array}\end{split}\]</div>
+<p>Suppose that we have four features <span class="math notranslate nohighlight">\(X_j\)</span>, <span class="math notranslate nohighlight">\(j\in\{1, 2, 3, 4\}\)</span> and we’d like to compute <em>permutation importance</em> for <span class="math notranslate nohighlight">\(X_2\)</span>. First, for each out-of-bag sample we compute <em>accuracy</em> of the model before and after permutation of the values of <span class="math notranslate nohighlight">\(X_2\)</span>.</p>
+<p>For instance, before permutation for <span class="math notranslate nohighlight">\(\overline{\mathfrak{B}}^{(1)}\)</span> we have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{c|cccc|cc|c}
+   &amp; X_1 &amp; \color{red}{X_2} &amp; X_3 &amp; X_4 &amp; y_i &amp; \hat{y}_i &amp; I\left(y_i=\hat{y}_i\right)\\
+  \hline
+  \textbf{2} &amp; 1 &amp; \color{red}2 &amp; 11 &amp; 101 &amp; \textbf{P} &amp; \textbf{P} &amp; 1\\
+  \hline
+  \textbf{4} &amp; 2 &amp; \color{red}3 &amp; 12 &amp; 102 &amp; \textbf{N} &amp; \textbf{P} &amp; 0\\
+  \hline
+  \textbf{5} &amp; 3 &amp; \color{red}5 &amp; 13 &amp; 103 &amp; \textbf{N} &amp; \textbf{N} &amp; 1\\
+  \hline
+      \textbf{6} &amp; 4 &amp; \color{red}7 &amp; 14 &amp; 104 &amp; \textbf{P} &amp; \textbf{P} &amp; 1\\
+ \end{array}\end{split}\]</div>
+<p>Thus, the accuracy before permutation is <span class="math notranslate nohighlight">\(3/4=0.75\)</span>.</p>
+<p>After permutation for <span class="math notranslate nohighlight">\(\overline{\mathfrak{B}}^{(1)}\)</span> we have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{c|cccc|cc|c}
+   &amp; X_1 &amp; \color{red}{X_2} &amp; X_3 &amp; X_4 &amp; y_i &amp; \hat{y}_i &amp; I\left(y_i=\hat{y}_i\right)\\
+  \hline
+  \textbf{2} &amp; 1 &amp; \color{red}5 &amp; 11 &amp; 101 &amp; \textbf{P} &amp; \textbf{P} &amp; 0\\
+  \hline
+  \textbf{4} &amp; 2 &amp; \color{red}7 &amp; 12 &amp; 102 &amp; \textbf{N} &amp; \textbf{P} &amp; 0\\
+  \hline
+  \textbf{5} &amp; 3 &amp; \color{red}2 &amp; 13 &amp; 103 &amp; \textbf{N} &amp; \textbf{N} &amp; 1\\
+  \hline
+      \textbf{6} &amp; 4 &amp; \color{red}3 &amp; 14 &amp; 104 &amp; \textbf{P} &amp; \textbf{P} &amp; 1\\
+ \end{array}\end{split}\]</div>
+<p>The accuracy after permutation is <span class="math notranslate nohighlight">\(2/4=0.50\)</span>.</p>
+<p>Then the difference between accuracies is computed.</p>
+<p>The above mentioned steps are to be done for each out-of-bag sample <span class="math notranslate nohighlight">\(\overline{\mathfrak{B}}^{(t)}\)</span>. To get not normalized <em>permutation importance</em> we sum all computed differences and divide by the number of trees. Normalization is done by dividing <em>not normalized permutation importance</em> by standard error.</p>
+</section>
+<section id="sklearn-random-forest-feature-importance">
+<h2>Sklearn Random Forest Feature Importance<a class="headerlink" href="#sklearn-random-forest-feature-importance" title="Link to this heading">#</a></h2>
+<p>Inspired by <a class="reference external" href="https://medium.com/&#64;srnghn/the-mathematics-of-decision-trees-random-forest-and-feature-importance-in-scikit-learn-and-spark-f2861df67e3">this</a> article.
+Sklearn library uses another approach to determine feature importance. The rationale for that method is that the more gain in information the node (with splitting feature <span class="math notranslate nohighlight">\(X_j\)</span>) provides, the higher its importance.</p>
+<p>The average reduction in the Gini impurity – or MSE for regression – represents the contribution of each feature to the homogeneity of nodes and leaves in the resulting Random Forest model. Each time a selected feature is used for splitting, the Gini impurity of the child nodes is calculated and compared with that of the original node.</p>
+<p>Gini impurity is a score of homogeneity with the range from  0  (homogeneous) to  1  (heterogeneous). The changes in the value of the splitting criterion are accumulated for each feature and normalized at the end of the calculation. A higher reduction in the Gini impurity signals that splitting results by this feature results in nodes with higher purity.</p>
+<p>The algorithm of obtaining feature importance may be represented with the following sequence of steps:</p>
+<ol class="arabic simple">
+<li><p>For each tree <span class="math notranslate nohighlight">\(t\)</span> in ensemble <span class="math notranslate nohighlight">\(t\in\{1,...,N\}\)</span>:</p></li>
+</ol>
+<p>1.1.  for each node <span class="math notranslate nohighlight">\(i\)</span> calculate the reduction in impurity (or MSE, or entropy) as <span class="math notranslate nohighlight">\({RI}_i^{(t)}=w_i^{(t)}\cdot I_i^{(t)} - w_{LEFT_i}^{(t)}\cdot I_{LEFT_i}^{(t)}-w_{RIGHT_i}^{(t)}\cdot I_{RIGHT_i}^{(t)}\)</span>, where:
+- <span class="math notranslate nohighlight">\(w_i^{(t)}\)</span>, <span class="math notranslate nohighlight">\(w_{LEFT_i}^{(t)}\)</span>, and <span class="math notranslate nohighlight">\(w_{RIGHT_i}^{(t)}\)</span> are respectively weighted number of samples reaching   node <span class="math notranslate nohighlight">\(i\)</span> in tree <span class="math notranslate nohighlight">\(t\)</span>, and its left <span class="math notranslate nohighlight">\(LEFT_i\)</span> and right <span class="math notranslate nohighlight">\(RIGHT_i\)</span> children
+- <span class="math notranslate nohighlight">\(I_i^{(t)}\)</span>, <span class="math notranslate nohighlight">\(I_{LEFT_i}^{(t)}\)</span>,   <span class="math notranslate nohighlight">\(I_{RIGHT_i}^{(t)}\)</span> are impurity of the nodes. For leaves <span class="math notranslate nohighlight">\({RI}_i^{(t)}\)</span> is equal to 0.</p>
+<p>1.2.  for each feature <span class="math notranslate nohighlight">\(j\)</span> calculate its importance in that particular tree as</p>
+<div class="math notranslate nohighlight">
+\[{FI}_j^{(t)}=\frac{\sum_{i:\text{node }i\text{ splits on feature } j}{RI}_i^{(t)}}{\sum_{i\in\text{all nodes}}{RI}_i^{(t)}}\]</div>
+<p>That means that in numerator we sum the reduction in impurity only in those nodes where feature <span class="math notranslate nohighlight">\(j\)</span> is situated.
+2. Calculate the average feature importances over all trees in ensemble:</p>
+<div class="math notranslate nohighlight">
+\[{FI}_j=\frac{\sum_{t=1}^N {FI}_j^{(t)}}{N}\]</div>
+<p>Those are pretty confusing formulas so let’s demonstrate each step with the Iris Dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iris_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;https://static-1300131294.cos.ap-shanghai.myqcloud.com/data/iris.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">iris_data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>SepalLength</th>
+      <th>SepalWidth</th>
+      <th>PetalLength</th>
+      <th>PetalWidth</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Since our aim is just to demonstrate the sequence of steps in calculating feature importances we’ll transform the <code class="docutils literal notranslate"><span class="pre">target</span></code> variable as for classifying Iris Virginica One-To-All.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="n">iris_data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s1">&#39;Iris-setosa&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Iris-versicolor&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Iris-virginica&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+<span class="n">target</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0      0
+1      0
+2      0
+3      0
+4      0
+      ..
+145    1
+146    1
+147    1
+148    1
+149    1
+Name: Name, Length: 150, dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+<p>Creating Random Forest. For reproducibility, we set <code class="docutils literal notranslate"><span class="pre">random_state=17</span></code>. For the sake of simplicity we set the number of trees to 3 and limit the depth of trees in ensemble to be not greater than 3.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="n">rfc</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+<span class="n">rfc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>After fitting list of all the trees are stored in <code class="docutils literal notranslate"><span class="pre">estimators_</span></code> property.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tree_list</span> <span class="o">=</span> <span class="n">rfc</span><span class="o">.</span><span class="n">estimators_</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Visualizing trees</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">tree</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">tree</span><span class="o">.</span><span class="n">plot_tree</span><span class="p">(</span>
+    <span class="n">tree_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">filled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+    <span class="n">class_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">],</span>
+    <span class="n">node_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/146bb978abe4ab91420ddd7af7bc4648ac81f12c82096c95f6f8b85dbb9c56f7.png"><img alt="../_images/146bb978abe4ab91420ddd7af7bc4648ac81f12c82096c95f6f8b85dbb9c56f7.png" src="../_images/146bb978abe4ab91420ddd7af7bc4648ac81f12c82096c95f6f8b85dbb9c56f7.png" style="width: 580px; height: 432px;" /></a>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">tree</span><span class="o">.</span><span class="n">plot_tree</span><span class="p">(</span>
+    <span class="n">tree_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">filled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+    <span class="n">class_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">],</span>
+    <span class="n">node_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/780f1a8c4327953eab99c102eabae54143818cdce6fff83080db66ce780edb25.png"><img alt="../_images/780f1a8c4327953eab99c102eabae54143818cdce6fff83080db66ce780edb25.png" src="../_images/780f1a8c4327953eab99c102eabae54143818cdce6fff83080db66ce780edb25.png" style="width: 580px; height: 432px;" /></a>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">tree</span><span class="o">.</span><span class="n">plot_tree</span><span class="p">(</span>
+    <span class="n">tree_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="n">filled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+    <span class="n">class_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">],</span>
+    <span class="n">node_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/92669f7ff6299054d84c42af3b1ba4e167fa638f4a5149e206df7dbb86ac4834.png"><img alt="../_images/92669f7ff6299054d84c42af3b1ba4e167fa638f4a5149e206df7dbb86ac4834.png" src="../_images/92669f7ff6299054d84c42af3b1ba4e167fa638f4a5149e206df7dbb86ac4834.png" style="width: 580px; height: 432px;" /></a>
+</div>
+</div>
+<p>Let’s start from the first tree and <code class="docutils literal notranslate"><span class="pre">Sepal</span> <span class="pre">length</span> <span class="pre">(cm)</span></code> feature. This feature is located in two nodes: the root (#0) and the rightmost node (#4). The reduction in impurity for these nodes are:</p>
+<div class="math notranslate nohighlight">
+\[{RI}_{{SL}_1}^{(1)}=\frac{150}{150}\cdot 0.482578 - \frac{63}{150}\cdot 0.061476 - \frac{87}{150}\cdot 0.436517 = 0.203578\]</div>
+<div class="math notranslate nohighlight">
+\[{RI}_{{SL}_2}^{(1)}=\frac{56}{150}\cdot 0.035077 - \frac{7}{150}\cdot 0.244898 - \frac{49}{150}\cdot 0 = 0.001667\]</div>
+<p>Note: The impurity for each node was recalculated to gain more accuracy than given in the picture.</p>
+<p>By doing the same calculations we get the following reduction in impurity for <code class="docutils literal notranslate"><span class="pre">Petal</span> <span class="pre">width</span> <span class="pre">(cm)</span></code>, and <code class="docutils literal notranslate"><span class="pre">Petal</span> <span class="pre">width</span> <span class="pre">(cm)</span></code> features:</p>
+<div class="math notranslate nohighlight">
+\[{RI}_{PL}^{(1)}=0.035785\]</div>
+<div class="math notranslate nohighlight">
+\[{RI}_{{PW}_1}^{(1)}=0.025820\]</div>
+<div class="math notranslate nohighlight">
+\[{RI}_{{PW}_2}^{(1)}=0.193633\]</div>
+<p>Summarizing all numbers in table</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{c|cc}
+  \text{Feature}, j &amp; \text{Total }RI_j^{(1)} &amp; {FI}_j^{(1)}\\ 
+  \hline
+  SL &amp; 0.205244 &amp; 0.445716\\
+  SW &amp; 0.000000 &amp; 0.000000\\
+  PL &amp; 0.035785 &amp; 0.077712\\
+  PW &amp; 0.219453 &amp; 0.476572\\
+  \hline
+  \sum &amp; 0.460483
+ \end{array}\end{split}\]</div>
+<p>After performing the same calculations for the second and third tree we average the results for features:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{c|ccc|c}
+  \text{Feature}, j &amp; {FI}_j^{(1)}&amp; {FI}_j^{(2)}&amp; {FI}_j^{(3)} &amp; {FI}_j\\ 
+  \hline
+  SL &amp; 0.445716 &amp; 0.000000 &amp; 0.000000 &amp; 0.148572\\
+  SW &amp; 0.000000 &amp; 0.039738 &amp; 0.000000 &amp; 0.013246\\
+  PL &amp; 0.077712 &amp; 0.844925 &amp; 0.162016 &amp; 0.361551\\
+  PW &amp; 0.476572 &amp; 0.115337 &amp; 0.837984 &amp; 0.476631\\
+ \end{array}\end{split}\]</div>
+<p>Let’s compare our result with those stored in the <code class="docutils literal notranslate"><span class="pre">feature_importances_</span></code> attribute.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">feature_names</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rfc</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5.1, 3.5, 1.4, 0.2]
+[0.14857187 0.01324612 0.36155096 0.47663104]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Voila!</p>
+</section>
+<section id="practical-example">
+<h2>Practical example<a class="headerlink" href="#practical-example" title="Link to this heading">#</a></h2>
+<p>Let’s consider the results of a survey given to visitors of hostels listed on <a class="reference external" href="http://Booking.com">Booking.com</a> and <a class="reference external" href="http://TripAdvisor.com">TripAdvisor.com</a>. Our features here are the average ratings for different categories including service quality, room condition, value for money, etc. Our target variable is the hostel’s overall rating on the website.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="n">hostel_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;https://static-1300131294.cos.ap-shanghai.myqcloud.com/data/hostel_factors.csv&quot;</span><span class="p">)</span>
+<span class="n">features</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Staff&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f2&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Hostel booking&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f3&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Check-in and check-out&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f4&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Room condition&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f5&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Shared kitchen condition&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f6&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Shared space condition&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f7&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Extra services&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f8&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;General conditions &amp; conveniences&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f9&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Value for money&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f10&quot;</span><span class="p">:</span> <span class="sa">u</span><span class="s2">&quot;Customer Co-creation&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">forest</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">max_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">forest</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">hostel_data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;hostel&quot;</span><span class="p">,</span> <span class="s2">&quot;rating&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">hostel_data</span><span class="p">[</span><span class="s2">&quot;rating&quot;</span><span class="p">])</span>
+<span class="n">importances</span> <span class="o">=</span> <span class="n">forest</span><span class="o">.</span><span class="n">feature_importances_</span>
+
+<span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">importances</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1"># Plot the feature importancies of the forest</span>
+<span class="n">num_to_plot</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">feature_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[:</span><span class="n">num_to_plot</span><span class="p">]]</span>
+
+<span class="c1"># Print the feature ranking</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Feature ranking:&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_to_plot</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">. </span><span class="si">%s</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> &quot;</span>
+        <span class="o">%</span> <span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">features</span><span class="p">[</span><span class="s2">&quot;f&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature_indices</span><span class="p">[</span><span class="n">f</span><span class="p">])],</span> <span class="n">importances</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">f</span><span class="p">]])</span>
+    <span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;Feature Importance&quot;</span><span class="p">)</span>
+<span class="n">bars</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="nb">range</span><span class="p">(</span><span class="n">num_to_plot</span><span class="p">),</span>
+    <span class="n">importances</span><span class="p">[</span><span class="n">indices</span><span class="p">[:</span><span class="n">num_to_plot</span><span class="p">]],</span>
+    <span class="n">color</span><span class="o">=</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">num_to_plot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_to_plot</span><span class="p">)]),</span>
+    <span class="n">align</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ticks</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_to_plot</span><span class="p">),</span> <span class="n">feature_indices</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_to_plot</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bars</span><span class="p">,</span> <span class="p">[</span><span class="sa">u</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="s2">&quot;f&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">feature_indices</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Feature ranking:
+1. Staff 0.183150 
+2. Value for money 0.147704 
+3. Shared space condition 0.128188 
+4. Extra services 0.116819 
+5. Customer Co-creation 0.105748 
+6. General conditions &amp; conveniences 0.088730 
+7. Shared kitchen condition 0.074776 
+8. Check-in and check-out 0.061881 
+9. Hostel booking 0.053899 
+10. Room condition 0.039105 
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/5cef35443c838a875e6e8bacfa10da0e1d2763d0959f3ab927c8e7b5f2292de4.png"><img alt="../_images/5cef35443c838a875e6e8bacfa10da0e1d2763d0959f3ab927c8e7b5f2292de4.png" src="../_images/5cef35443c838a875e6e8bacfa10da0e1d2763d0959f3ab927c8e7b5f2292de4.png" style="width: 580px; height: 432px;" /></a>
+</div>
+</div>
+<p>The picture above shows that, more often than not, customers pay great attention to staff and the price-quality ratio. This couple of factors affects the resulting overall rating the most. The difference between these two features and other features is not very large, so we can conclude that exclusion of any of these features will lead to a reduction of model’s accuracy. However, based on our analysis, we can recommend hostel owners to focus primarily on staff training and price-to-quality ratio.</p>
+</section>
+<section id="your-turn">
+<h2>Your turn! 🚀<a class="headerlink" href="#your-turn" title="Link to this heading">#</a></h2>
+<p>TBD</p>
+</section>
+<section id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Link to this heading">#</a></h2>
+<p>Thanks to <a class="reference external" href="https://www.kaggle.com/kashnitsky">Yury Kashnitsky</a> for creating the open-source content <a class="reference external" href="https://www.kaggle.com/code/kashnitsky/topic-5-ensembles-part-3-feature-importance/notebook">Ensembles and random forest</a>. They inspire the majority of the content in this chapter.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./book"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="random-forest.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Random forest</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="notebooks.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Content with notebooks</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#permutation-importance">Permutation importance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#illustrating-permutation-importance">Illustrating permutation importance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sklearn-random-forest-feature-importance">Sklearn Random Forest Feature Importance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-example">Practical example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-turn">Your turn! 🚀</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By yjl
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
